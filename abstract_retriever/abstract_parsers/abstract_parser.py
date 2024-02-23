@@ -7,18 +7,28 @@ from bs4 import BeautifulSoup
 class AbstractParser:
     URL_PREFIX = "https://example.com/"
     ABSTRACT_SELECTOR = "p.abstract"
+    USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
 
-    def __init__(self, url):
+    def __init__(self, url, debug=False):
+        self.debug = debug
         self.url = url
 
     @classmethod
     def supports_url(cls, url):
         return url.startswith(cls.URL_PREFIX)
 
+    def d(self, message):
+        if self.debug:
+            print(message)
+
     def fetch_html(self):
         try:
-            response = requests.get(self.url)
-            if response.status_code == 200:
+            headers = {
+                'User-Agent': self.USER_AGENT
+            }
+            response = requests.get(self.url, headers=headers, allow_redirects=True)
+            self.d(f"Status code: {response.status_code}")
+            if response.status_code == 200 or response.status_code == 418:
                 return response.text
             else:
                 return None

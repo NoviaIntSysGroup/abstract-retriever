@@ -2,12 +2,12 @@ import pytest
 import abstract_retriever
 
 ############################### Change these... ##########################################
-#                                          also this            and this
-from abstract_retriever.abstract_parsers.nature_parser import NatureParser
-example_class = NatureParser
-example_url = "https://www.nature.com/articles/s42003-023-05457-y"
-example_doi = "10.1038/s42003-023-05457-y"
-example_abstracts_start = "High-resolution 3D imaging of species with exoskeletons such"
+#                                               also this                   and this
+from abstract_retriever.abstract_parsers.science_direct_parser import ScienceDirectParser
+example_class = ScienceDirectParser
+example_url = "https://www.sciencedirect.com/science/article/abs/pii/S1005030224000446"
+example_doi = "10.1016/j.jmst.2023.12.007"
+example_abstracts_start = "Here, the stress corrosion crack growth behaviour of a high-"
 ##########################################################################################
 
 ###

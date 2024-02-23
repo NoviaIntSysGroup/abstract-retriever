@@ -3,11 +3,11 @@ import abstract_retriever
 
 ############################### Change these... ##########################################
 #                                          also this            and this
-from abstract_retriever.abstract_parsers.nature_parser import NatureParser
-example_class = NatureParser
-example_url = "https://www.nature.com/articles/s42003-023-05457-y"
-example_doi = "10.1038/s42003-023-05457-y"
-example_abstracts_start = "High-resolution 3D imaging of species with exoskeletons such"
+from abstract_retriever.abstract_parsers.ieee_parser import IeeeParser
+example_class = IeeeParser
+example_url = "https://ieeexplore.ieee.org/document/10373057"
+example_doi = "10.1109/TASC.2023.3346357"
+example_abstracts_start = "In the quest for climate neutrality in the aviation industry"
 ##########################################################################################
 
 ###
