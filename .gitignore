@@ -1,0 +1,15 @@
+# Ignore Python bytecode files
+*.pyc
+__pycache__/
+
+# Ignore environment folder
+env/
+venv/
+
+# Ignore IDE-specific files
+.vscode/
+.idea/
+
+# Ignore distribution/dist build directory
+dist/
+build/
