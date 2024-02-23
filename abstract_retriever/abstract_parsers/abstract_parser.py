@@ -11,8 +11,8 @@ class AbstractParser:
         'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
     }
 
-    def __init__(self, url, debug=False):
-        self.debug = debug
+    def __init__(self, url, verbose=False):
+        self.verbose = verbose
         self.url = url
 
     @classmethod
@@ -20,7 +20,7 @@ class AbstractParser:
         return url.startswith(cls.URL_PREFIX)
 
     def d(self, message):
-        if self.debug:
+        if self.verbose:
             print(message)
 
     def fetch_html(self):

@@ -47,19 +47,18 @@ def load_parsers():
 
 PARSERS = load_parsers()
 
-def get_abstract(url):
+def get_abstract(url, verbose=False):
     url = get_final_url(url)
     for parser_module in PARSERS:
         parser_class_name = ''.join(word.capitalize() for word in parser_module.__name__.split('_')[:-1]) + "Parser"
 
         parser_class = getattr(parser_module, parser_class_name)
         if parser_class and parser_class.supports_url(url):
-            parser = parser_class(url)
-            html_content = parser.fetch_html()
-            return parser.parse_abstract(html_content)
+            parser = parser_class(url, verbose)
+            return parser.get_abstract()
     raise ValueError("No parser available for the provided URL")
 
-def get_abstract_from_doi(doi, cache=False):
+def get_abstract_from_doi(doi, cache=False, verbose=False):
     if cache:
         abstract = read_cached_abstract(doi)
         if abstract:
@@ -68,7 +67,7 @@ def get_abstract_from_doi(doi, cache=False):
     safedoi = urllib.parse.quote(doi, safe="/").replace("%2F", "/")
     url = f"https://doi.org/{safedoi}"
 
-    abstract = get_abstract(url)
+    abstract = get_abstract(url, verbose=verbose)
     if cache:
         cache_abstract(doi, abstract)
     return abstract
