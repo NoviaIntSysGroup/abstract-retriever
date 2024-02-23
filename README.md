@@ -41,7 +41,17 @@ pip install -r requirements.txt
 
 ## Usage
 
-Describe how to use your project here. Provide examples and usage scenarios.
+```python
+get_abstract("https://www.sciencedirect.com/science/article/abs/pii/S1005030224000446")
+```
+
+```python
+get_abstract("https://doi.org/10.1016/j.jmst.2023.12.007")
+```
+
+```python
+get_abstract_from_doi("10.1016/j.jmst.2023.12.007")
+```
 
 ## Testing
 
