@@ -7,7 +7,9 @@ from bs4 import BeautifulSoup
 class AbstractParser:
     URL_PREFIX = "https://example.com/"
     ABSTRACT_SELECTOR = "p.abstract"
-    USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36"
+    HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36'
+    }
 
     def __init__(self, url, debug=False):
         self.debug = debug
@@ -23,16 +25,19 @@ class AbstractParser:
 
     def fetch_html(self):
         try:
-            headers = {
-                'User-Agent': self.USER_AGENT
-            }
-            response = requests.get(self.url, headers=headers, allow_redirects=True)
+            response = requests.get(self.url, headers=self.HEADERS, allow_redirects=True)
             self.d(f"Status code: {response.status_code}")
+            if response.status_code == 403:
+                self.d(f"It seems we are not allowed to fetch {self.url}")
+                self.d(response)
+                return None
             if response.status_code == 200 or response.status_code == 418:
                 return response.text
             else:
+                self.d(f"No content it seems..., but status code is {response.status_code}")
                 return None
         except Exception as e:
+            self.d(e)
             return None
 
     def get_abstract(self):

@@ -74,6 +74,11 @@ Once installed, you can use ptw from the command line to watch your project dire
 ptw
 ```
 
+If you for instance wish to just watch one test file while you are working on the parsers code you could do this, so as not having to run all tests when working on one particular parser.
+```bash
+ptw tests/abstract_parsers/test_science_direct_parser.py abstract_retriever/abstract_parsers -nv
+```
+
 ## Contributing
 Contributions are welcome! Please follow these guidelines:
 
