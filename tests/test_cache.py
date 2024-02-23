@@ -17,5 +17,4 @@ def test_cache_file_is_created_and_has_content(capsys):
         cache_abstract(doi, content)
         assert os.path.exists(file_path) == True
         cached_content = read_cached_abstract(doi)
-        print(cached_content)
         assert cached_content == content
