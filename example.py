@@ -22,13 +22,14 @@ def entries2html(entries):
         html += "</b>"
         
         html += f"<p class'published'>{', '.join(entry['authors'])}</p>"
+        html += f"Cited by: {entry['citations']}"
         html += f"<p>{entry['abstract']}</p>"
         html += "</div>"
         
     return html
 
 def search_elsevier_api(query, api_key, max_results=10):
-    url = f"https://api.elsevier.com/content/search/scopus?query={query}&apiKey={api_key}&count={max_results}"
+    url = f"https://api.elsevier.com/content/search/scopus?query={query}&apiKey={api_key}&count={max_results}&sort=citedby-count"
     response = requests.get(url)
     if response.status_code == 200:
         return response.json()
