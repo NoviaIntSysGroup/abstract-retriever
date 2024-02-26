@@ -58,6 +58,15 @@ def get_abstract(url, verbose=False):
             return parser.get_abstract()
     raise ValueError("No parser available for the provided URL")
 
+def create_doi_url(doi):
+    safedoi = urllib.parse.quote(doi, safe="/").replace("%2F", "/")
+    url = f"https://doi.org/{safedoi}"
+    return url
+
+def get_final_doi_url(doi):
+    url = create_doi_url(doi)
+    return get_final_url(url)
+
 def get_abstract_from_doi(doi, cache=False, verbose=False):
     if cache:
         abstract = read_cached_abstract(doi)
