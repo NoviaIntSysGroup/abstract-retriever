@@ -55,7 +55,7 @@ def search_and_fetch_abstracts(query, api_key, max_results=10):
                 abstract = get_abstract_from_doi(doi)
             except:
                 url = get_final_doi_url(doi)
-                abstract = f"No abstract for url {url}"
+                abstract = f"<p>No abstract for:<ul><li>doi: {doi}</li><li>url: {url}</li></p>"
             
             #entry["abstract"] = abstract
             entries_with_abstracts.append({
