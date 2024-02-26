@@ -52,6 +52,16 @@ get_abstract("https://doi.org/10.1016/j.jmst.2023.12.007")
 ```python
 get_abstract_from_doi("10.1016/j.jmst.2023.12.007")
 ```
+## A simple Search UI
+If you want to see it in action, you can start the gradio app.
+```bash
+python example.py
+```
+
+or if you want to develop the example and reload the app when you change the code, you can start it with:
+```bash
+gradio example.py
+```
 
 ## Testing
 
