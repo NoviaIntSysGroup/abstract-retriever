@@ -29,6 +29,7 @@ def entries2html(entries):
     return html
 
 def search_elsevier_api(query, api_key, max_results=10):
+    # Check parameters at https://dev.elsevier.com/guides/Scopus%20API%20Guide_V1_20230907.pdf from page 47 onwards
     url = f"https://api.elsevier.com/content/search/scopus?query={query}&apiKey={api_key}&count={max_results}&sort=citedby-count"
     response = requests.get(url)
     if response.status_code == 200:
@@ -82,6 +83,7 @@ def search(api_key, term):
 with gr.Blocks() as demo:
     gr.Markdown("# Abstract Search")
     api_key = gr.Textbox(label="Elsevier API key", placeholder="API key")
+    # https://schema.elsevier.com/dtds/document/bkapi/search/SCOPUSSearchTips.htm
     search_term = gr.Textbox(label="Search Term", placeholder="Virtual AND Sea Commissioning")
     submit = gr.Button(value="search")
     results = gr.HTML()

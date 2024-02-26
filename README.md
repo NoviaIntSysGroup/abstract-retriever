@@ -60,6 +60,7 @@ You will need gradio
 pip install gradio
 ```
 
+You can check serch syntax [here](https://schema.elsevier.com/dtds/document/bkapi/search/SCOPUSSearchTips.htm)
 ```bash
 python example.py
 ```
