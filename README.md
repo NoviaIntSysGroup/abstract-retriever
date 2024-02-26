@@ -54,6 +54,12 @@ get_abstract_from_doi("10.1016/j.jmst.2023.12.007")
 ```
 ## A simple Search UI
 If you want to see it in action, you can start the gradio app.
+
+You will need gradio
+```bash
+pip install gradio
+```
+
 ```bash
 python example.py
 ```
