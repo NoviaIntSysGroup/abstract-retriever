@@ -60,10 +60,13 @@ CHROMEDRIVER_PATH='/path/to/chromedriver' python example.py
 
 example, using the ptw that is mentioned later
 ```
-CHROME 
-DRIVER_PATH=/opt/homebrew/bin/chromedriver ptw tests/abstract_parsers/test_journals_physiology_parser.py abstract_retriever/ -nv
+CHROME_DRIVER_PATH=/opt/homebrew/bin/chromedriver ptw tests/abstract_parsers/test_journals_physiology_parser.py abstract_retriever/ -nv
 ```
 
+copy .env file and add your apy keys to it
+```bash
+cp .env.example .env
+```
 
 ## Usage
 
