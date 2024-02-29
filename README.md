@@ -39,6 +39,32 @@ source env/bin/activate  # On macOS/Linux
 pip install -r requirements.txt
 ```
 
+For parsing some abstracts, you need to use chromedriver.
+if you want to us that install chromedriver and pass along its path as an environmental variable when you start the app.
+
+#### Using Chromedriver om a Mac
+
+```
+brew install chromedriver
+```
+
+find the path to chromedriver
+```
+which chromedriver
+```
+
+Have an environmental variable for chrome driver path, or when you launch the app or service etc.
+```
+CHROMEDRIVER_PATH='/path/to/chromedriver' python example.py
+```
+
+example, using the ptw that is mentioned later
+```
+CHROME 
+DRIVER_PATH=/opt/homebrew/bin/chromedriver ptw tests/abstract_parsers/test_journals_physiology_parser.py abstract_retriever/ -nv
+```
+
+
 ## Usage
 
 ```python

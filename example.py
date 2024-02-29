@@ -5,11 +5,17 @@ import os
 import json
 
 from abstract_retriever import get_abstract_from_doi, get_final_doi_url
-from abstract_retriever.cache import DEFAULT_CACHE_DIR
+from abstract_retriever.cache import FileCache
 
-CACHE_DIR = DEFAULT_CACHE_DIR
-SEARCH_CACHE_DIR = os.path.join(CACHE_DIR, "scopus_search")
-ABSTRACT_CACHE_DIR = os.path.join(CACHE_DIR, "abstracts")
+from dotenv import load_dotenv
+load_dotenv()
+
+OPENAI_API_KEY = os.getenv('OPENAI_API_KEY')
+ELSEVIER_API_KEY = os.getenv('ELSEVIER_API_KEY')
+
+
+
+cache = FileCache("gradio-example-cache")
 
 def entries2html(entries):
     html = ""
@@ -28,35 +34,35 @@ def entries2html(entries):
         
     return html
 
-def search_elsevier_api(query, api_key, max_results=10):
+def search_elsevier_api(query, api_key, max_results=1):
+    key = "search-" + str(max_results) + ":" + query
+
+    if cache and cache.exists(key):
+        return json.loads(cache.get(key))
+
     # Check parameters at https://dev.elsevier.com/guides/Scopus%20API%20Guide_V1_20230907.pdf from page 47 onwards
     url = f"https://api.elsevier.com/content/search/scopus?query={query}&apiKey={api_key}&count={max_results}&sort=citedby-count"
     response = requests.get(url)
     if response.status_code == 200:
-        return response.json()
+        data = response.json()
+        cache.set(key, json.dumps(data))
+        return data
     else:
         print("Error:", response.status_code)
         return None
 
-def cache_search_results(query, search_results):
-    cache_dir = os.path.join(SEARCH_CACHE_DIR, query.replace(" ", "_"))
-    os.makedirs(cache_dir, exist_ok=True)
-    with open(os.path.join(cache_dir, "page1.json"), "w") as f:
-        json.dump(search_results, f)
-
-def search_and_fetch_abstracts(query, api_key, max_results=10):
+def search_and_fetch_abstracts(query, api_key, openai_api_key, max_results=10):
     search_results = search_elsevier_api(query, api_key, max_results)
-    #print(search_results)
+
     results = []
-    if search_results:
-        cache_search_results(query, search_results)
+    if search_results:        
         entries_with_abstracts = []
         for entry in search_results["search-results"]["entry"]:
             doi = entry.get("prism:doi", "")
             try:                
-                abstract = get_abstract_from_doi(doi)
+                abstract = get_abstract_from_doi(doi, cache)
             except:
-                url = get_final_doi_url(doi)
+                url = get_final_doi_url(doi, cache)
                 abstract = f"<p>No abstract for:<ul><li>doi: {doi}</li><li>url: {url}</li></p>"
             
             #entry["abstract"] = abstract
@@ -76,20 +82,23 @@ def search_and_fetch_abstracts(query, api_key, max_results=10):
     else:
         return []
 
-def search(api_key, term):
-    abstracts = search_and_fetch_abstracts(term, api_key, 10)
+def search(api_key, openai_api_key, term):
+    abstracts = search_and_fetch_abstracts(term, api_key, openai_api_key, 10)
     return entries2html(abstracts)
 
 with gr.Blocks() as demo:
     gr.Markdown("# Abstract Search")
-    api_key = gr.Textbox(label="Elsevier API key", placeholder="API key")
+    elsevier_api_key = gr.Textbox(label="Elsevier API key", placeholder="Elsevier API key", value=ELSEVIER_API_KEY, type="password")
+    openai_api_key = gr.Textbox(label="OpenAI API key", placeholder="OpenAI API key", value=OPENAI_API_KEY, type="password")
     # https://schema.elsevier.com/dtds/document/bkapi/search/SCOPUSSearchTips.htm
-    search_term = gr.Textbox(label="Search Term", placeholder="Virtual AND Sea Commissioning")
+    search_term = gr.Textbox(label="Search Term", placeholder="TITLE-ABS-KEY(virtual twin maritime)", value="TITLE-ABS-KEY(virtual twin maritime)")
+    html = gr.HTML("For more information on how to search, check out <a href='https://schema.elsevier.com/dtds/document/bkapi/search/SCOPUSSearchTips.htm' target=_blank>this pdf</a>")
+
     submit = gr.Button(value="search")
     results = gr.HTML()
 
     submit.click(fn=search,
-               inputs=[api_key,search_term],
+               inputs=[elsevier_api_key, openai_api_key, search_term],
                outputs=results)
 
 if __name__ == "__main__":

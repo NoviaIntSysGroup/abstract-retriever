@@ -16,4 +16,3 @@ def test_final_doi_url_for_science_direct():
 def test_final_doi_url_for_nature():
     url = get_final_doi_url("10.1038/s42003-023-05457-y")
     assert url == "https://www.nature.com/articles/s42003-023-05457-y"
-

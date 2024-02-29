@@ -2,27 +2,51 @@ import os
 import tempfile
 
 LIBRARY_IDENTIFIER = "abstract-retriever"
-ABSTRACT_CACHE_FOLDER_NAME = "abstracts"
-DEFAULT_CACHE_DIR = os.path.join(tempfile.gettempdir(), LIBRARY_IDENTIFIER)
+CACHE_DIR = os.path.join(tempfile.gettempdir(), LIBRARY_IDENTIFIER)
 
-def create_cache_filepath(doi, cache_dir=DEFAULT_CACHE_DIR):
-    return os.path.join(cache_dir, ABSTRACT_CACHE_FOLDER_NAME, doi.replace("/", "_") + ".txt")
+# should be comaptiable with RedisCache...
+class Cacheable:
+    def set(self, key, value):
+        raise NotImplementedError("Subclasses must implement set()")
 
-def read_cached_abstract(doi, cache_dir=DEFAULT_CACHE_DIR):
-    file_path = create_cache_filepath(doi, cache_dir)
-    if os.path.exists(file_path):
-        with open(file_path, "r") as f:
-            return f.read()
-    else:
-        return None
-    
-def cache_abstract(doi, abstract, cache_dir=DEFAULT_CACHE_DIR):
-    if abstract is None or str(abstract).startswith("No abstract"):
+    def get(self, key):
+        raise NotImplementedError("Subclasses must implement get()")
+
+    def exists(self, key):
+        raise NotImplementedError("Subclasses must implement exists()")
+
+    def path(self, key):
+        modified_key = key.replace("/", "_").replace(":", "/", 1).replace(":", "-")
+        return os.path.join(self.folder, modified_key + ".txt")
+
+    def __init__(self, folder_name='cache') -> None:
+        self.folder = os.path.join(CACHE_DIR, folder_name)
+        os.makedirs(self.folder, exist_ok=True)
+
+class FileCache(Cacheable):
+    def __init__(self, folder_name='file-cache') -> None:
+        super().__init__(folder_name=folder_name)
+
+    def set(self, key, value):
+        file_path = self.path(key)
+        os.makedirs(os.path.dirname(file_path), exist_ok=True)
+        with open(file_path, "w") as f:
+            f.write(value)
+        return True
+
+    def get(self, key):
+        file_path = self.path(key)
+        
+        if os.path.exists(file_path):
+            with open(file_path, "r") as f:
+                return f.read()
+        else:
+            return None
+        
+    def exists(self, key):
+        file_path = self.path(key)
+        
+        if os.path.exists(file_path):
+            return True
+
         return False
-    
-    os.makedirs(os.path.join(cache_dir), exist_ok=True)
-
-    cache_file = create_cache_filepath(doi, cache_dir)
-    with open(cache_file, "w") as f:
-        f.write(abstract)
-    return True
