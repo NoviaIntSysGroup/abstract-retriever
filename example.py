@@ -15,7 +15,7 @@ ELSEVIER_API_KEY = os.getenv('ELSEVIER_API_KEY')
 
 
 
-cache = FileCache("gradio-example-cache")
+cache = FileCache("gradio-example-cache", True)
 
 def entries2html(entries):
     html = ""
@@ -38,6 +38,7 @@ def search_elsevier_api(query, api_key, max_results=1):
     key = "search-" + str(max_results) + ":" + query
 
     if cache and cache.exists(key):
+        print("cache hit")
         return json.loads(cache.get(key))
 
     # Check parameters at https://dev.elsevier.com/guides/Scopus%20API%20Guide_V1_20230907.pdf from page 47 onwards
@@ -60,9 +61,9 @@ def search_and_fetch_abstracts(query, api_key, openai_api_key, max_results=10):
         for entry in search_results["search-results"]["entry"]:
             doi = entry.get("prism:doi", "")
             try:                
-                abstract = get_abstract_from_doi(doi, cache)
+                abstract = get_abstract_from_doi(doi, cache, True)
             except:
-                url = get_final_doi_url(doi, cache)
+                url = get_final_doi_url(doi, cache, True)
                 abstract = f"<p>No abstract for:<ul><li>doi: {doi}</li><li>url: {url}</li></p>"
             
             #entry["abstract"] = abstract

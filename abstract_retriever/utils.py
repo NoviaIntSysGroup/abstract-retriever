@@ -72,7 +72,7 @@ def create_doi_url(doi):
     url = f"https://doi.org/{safedoi}"
     return url
 
-def get_final_doi_url(doi, cache=None):
+def get_final_doi_url(doi, cache=None, verbose=False):
     key = "doi2url:" + doi
     if cache and cache.exists(key):
         return cache.get(key)
@@ -88,9 +88,13 @@ def get_final_doi_url(doi, cache=None):
 
 def get_abstract_from_doi(doi, cache=None, verbose=False):
     key = "doi2abs:" + doi
-    print(key + " .....")
     if cache and cache.exists(key):
+        if verbose:
+            print(f"from cache: {key}.....")
         return cache.get(key)
+   
+    if verbose:
+        print(f"resolving: {key}.....")
 
     safedoi = urllib.parse.quote(doi, safe="/").replace("%2F", "/")
     url = f"https://doi.org/{safedoi}"

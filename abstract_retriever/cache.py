@@ -24,8 +24,10 @@ class Cacheable:
         os.makedirs(self.folder, exist_ok=True)
 
 class FileCache(Cacheable):
-    def __init__(self, folder_name='file-cache') -> None:
+    def __init__(self, folder_name='file-cache', verbose=False) -> None:
         super().__init__(folder_name=folder_name)
+        if verbose:
+            print(f"cache folder: {self.folder}")
 
     def set(self, key, value):
         file_path = self.path(key)

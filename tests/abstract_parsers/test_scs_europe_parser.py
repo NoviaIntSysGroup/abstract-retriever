@@ -2,12 +2,12 @@ import pytest
 import abstract_retriever
 
 ############################### Change these... ##########################################
-#                                               also this                   and this
-from abstract_retriever.abstract_parsers.science_direct_parser import ScienceDirectParser
-example_class = ScienceDirectParser
-example_url = "https://www.sciencedirect.com/science/article/abs/pii/S092575352030196X"
-example_doi = "10.1016/j.ssci.2020.104799"
-example_abstracts_start = "Autonomous ships are expected to change water-based transport"
+#                                          also this            and this
+from abstract_retriever.abstract_parsers.scs_europe_parser import ScsEuropeParser
+example_class = ScsEuropeParser
+example_url = "https://www.scs-europe.net/dlib/2019/2019-0023.htm"
+example_doi = "10.7148/2019-0023"
+example_abstracts_start = "A web-based approach gives advantages"
 ##########################################################################################
 
 ###
@@ -28,7 +28,7 @@ def test_parser_returns_html(capsys):
 
 def test_that_it_returns_something(capsys):
     with capsys.disabled():
-        parser = example_class(example_url, None, True)
+        parser = example_class(example_url)
         html_content = parser.fetch_html()
         abstract = parser.get_abstract()
         assert abstract is not None, f"{parser_name} does not get an abstract"
