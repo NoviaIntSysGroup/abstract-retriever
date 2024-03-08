@@ -87,7 +87,7 @@ def get_final_doi_url(doi, cache=None, verbose=False):
     return final_url
 
 
-def get_abstract_from_doi(doi, cache=None, verbose=False):
+def get_abstract_from_doi(doi, cache=None, verbose=False, fallback=""):
     key = "doi2abs:" + doi
     if cache and cache.exists(key):
         if verbose:
@@ -99,8 +99,11 @@ def get_abstract_from_doi(doi, cache=None, verbose=False):
 
     safedoi = urllib.parse.quote(doi, safe="/").replace("%2F", "/")
     url = f"https://doi.org/{safedoi}"
+    try:
+        abstract = get_abstract(url, cache, verbose=verbose)
+    except:
+        abstract = fallback
 
-    abstract = get_abstract(url, cache, verbose=verbose)
     if cache:
         cache.set(key, abstract)
     return abstract
