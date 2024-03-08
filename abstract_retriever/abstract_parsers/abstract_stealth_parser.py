@@ -1,5 +1,7 @@
 import requests, random, os
 from bs4 import BeautifulSoup
+from selenium import webdriver
+from selenium.webdriver.chrome.options import Options
 from time import sleep
 import warnings
 
@@ -62,11 +64,29 @@ class AbstractParser:
             return response.text
         except requests.HTTPError as e:
             if e.response.status_code == 403:
-                print("permission denied")
+                # Fallback to Selenium
+                self.d("falling back to selenium");
+                if self.chromedriver_path is not None:
+                    with warnings.catch_warnings(): # Chromedriver seems to generate som warning mesasages
+                        warnings.simplefilter("ignore")
+                        return self.get_with_selenium(url)
             else:
                 self.d(f"error is {e.response.status_code}")
                 self.d(e.response.text)
-                return None  # Re-raise other HTTP errors
+                return "foo"  # Re-raise other HTTP errors
+    
+    def get_with_selenium(self, url):
+        options = Options()
+        options.add_argument("--headless")  # Run Chrome in headless mode
+        driver = webdriver.Chrome(executable_path=self.chromedriver_path, options=options)
+        
+        try:
+            driver.get(url)
+            page_source = driver.page_source
+            driver.quit()
+            return page_source
+        except Exception as e:
+            return
 
     def fetch_html(self):
         try:

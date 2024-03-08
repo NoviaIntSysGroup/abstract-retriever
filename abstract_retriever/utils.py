@@ -1,6 +1,7 @@
 import importlib.util
 import os, urllib, requests
 from .cache import FileCache
+import json
 
 def load_resolvers():
     # Dynamically load all resolver modules in the url_resolvers package
@@ -103,3 +104,62 @@ def get_abstract_from_doi(doi, cache=None, verbose=False):
     if cache:
         cache.set(key, abstract)
     return abstract
+
+
+def get_references(url, cache=None, verbose=False):
+    url = get_final_url(url, cache)
+    for parser_module in PARSERS:
+        parser_class_name = ''.join(word.capitalize() for word in parser_module.__name__.split('_')[:-1]) + "Parser"
+
+        parser_class = getattr(parser_module, parser_class_name)
+        if parser_class and parser_class.supports_url(url):
+            parser = parser_class(url, cache, verbose)
+            return parser.get_references()
+    raise ValueError(f"No parser for {url}")
+
+def get_references_from_doi(doi, cache=None, verbose=False):
+    key = "doi2ref:" + doi
+    if cache and cache.exists(key):
+        if verbose:
+            print(f"from cache: {key}.....")
+        return json.loads(cache.get(key))
+   
+    if verbose:
+        print(f"resolving: {key} .....")
+
+    safedoi = urllib.parse.quote(doi, safe="/").replace("%2F", "/")
+    url = f"https://doi.org/{safedoi}"
+
+    references = get_references(url, cache, verbose=verbose)
+    if cache:
+        cache.set(key, json.dumps(references))
+    return references
+
+def get_all(url, cache=None, verbose=False):
+    url = get_final_url(url, cache)
+    for parser_module in PARSERS:
+        parser_class_name = ''.join(word.capitalize() for word in parser_module.__name__.split('_')[:-1]) + "Parser"
+
+        parser_class = getattr(parser_module, parser_class_name)
+        if parser_class and parser_class.supports_url(url):
+            parser = parser_class(url, cache, verbose)
+            return parser.get_all()
+    return None
+
+def get_all_from_doi(doi, cache=None, verbose=False):
+    key = "doi2all:" + doi
+    if cache and cache.exists(key):
+        if verbose:
+            print(f"from cache: {key}.....")
+        return json.loads(cache.get(key))
+   
+    if verbose:
+        print(f"resolving: {key} .....")
+
+    safedoi = urllib.parse.quote(doi, safe="/").replace("%2F", "/")
+    url = f"https://doi.org/{safedoi}"
+
+    references = get_all(url, cache, verbose=verbose)
+    if cache:
+        cache.set(key, json.dumps(references))
+    return references

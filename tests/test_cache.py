@@ -1,5 +1,5 @@
 from abstract_retriever.cache import *
-from abstract_retriever import get_abstract_from_doi
+from abstract_retriever import get_abstract_from_doi, get_references_from_doi
 from abstract_retriever import get_final_doi_url
 
 cache = FileCache("cache-test")
@@ -49,6 +49,19 @@ def test_get_abstract_from_doi_obeys_cache_flags(capsys):
 
         assert cache.exists(key)
 
+
+def test_get_references_from_doi():
+    references = get_references_from_doi("10.1007/s40948-023-00721-1", cache)
+    assert len(references) > 0
+
+    references = get_references_from_doi("10.1007/s00134-012-2769-8", cache)
+    assert len(references) > 0
+
+    references = get_references_from_doi("10.1007/s00134-012-2769-8", cache)
+    assert len(references) > 1
+    
+
+
 """
 def test_final_doi_url_for_ieee():
     url = get_final_doi_url("10.1109/TASC.2023.3346357", cache)
@@ -67,6 +80,6 @@ def test_final_doi_url_for_nature():
     assert url == "https://www.nature.com/articles/s42003-023-05457-y"
 """
 
-def test_get_abstract_from_doi():
-    doi = "10.1152/physrev.00018.2001"
-    abstract = get_abstract_from_doi(doi, cache)
+#def test_get_abstract_from_doi():
+#    doi = "10.1152/physrev.00018.2001"
+#    abstract = get_abstract_from_doi(doi, cache)

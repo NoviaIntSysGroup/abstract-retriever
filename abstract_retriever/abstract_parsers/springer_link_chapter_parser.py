@@ -1,5 +1,4 @@
-from abstract_retriever.abstract_parsers.abstract_parser import AbstractParser
+from abstract_retriever.abstract_parsers.springer_generic_parser import SpringerGenericParser
 
-class SpringerLinkChapterParser(AbstractParser):
+class SpringerLinkChapterParser(SpringerGenericParser):
     URL_PREFIX = "https://link.springer.com/chapter/"
-    ABSTRACT_SELECTOR = "#Abs1-content p"

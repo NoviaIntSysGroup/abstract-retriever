@@ -32,9 +32,12 @@ class FileCache(Cacheable):
     def set(self, key, value):
         file_path = self.path(key)
         os.makedirs(os.path.dirname(file_path), exist_ok=True)
-        with open(file_path, "w") as f:
-            f.write(value)
-        return True
+        try:
+            with open(file_path, "w") as f:
+                f.write(value)
+            return True
+        except:
+            return False
 
     def get(self, key):
         file_path = self.path(key)

@@ -1,6 +1,7 @@
 beautifulsoup4==4.10.0
 requests==2.26.0
-selenium==3.141.0
-undetected-chromedriver
 pytest
 python-dotenv
+pyppeteer
+pyppeteer_stealth
+pytest-asyncio

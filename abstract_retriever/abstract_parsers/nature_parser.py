@@ -1,5 +1,4 @@
-from abstract_retriever.abstract_parsers.abstract_parser import AbstractParser
+from abstract_retriever.abstract_parsers.springer_generic_parser import SpringerGenericParser
 
-class NatureParser(AbstractParser):
+class NatureParser(SpringerGenericParser):
     URL_PREFIX = "https://www.nature.com/articles/"
-    ABSTRACT_SELECTOR = "div.c-article-section__content#Abs1-content p"
