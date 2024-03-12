@@ -11,6 +11,7 @@ class AbstractParser:
     ABSTRACT_SELECTOR = "p.abstract"
     TITLE_SELECTOR = "h1"
     REFERENCES_SELECTOR = "#preview-section-references ul li.bib-reference"
+    IS_MULTIPLE = False
 
     USER_AGENTS = [
         "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -38,6 +39,20 @@ class AbstractParser:
     @classmethod
     def supports_url(cls, url):
         return url.startswith(cls.URL_PREFIX)
+
+    def get_canonical(self, html_content=None):
+        if not html_content:
+            html_content = self.fetch_html()
+        if not html_content:
+            return None
+
+        try:
+            soup = BeautifulSoup(html_content, 'html.parser')
+            canonical_element = soup.select_one('link[rel="canonical"]')
+            return canonical_element.get('href').strip()
+        
+        except Exception as e:
+            return self.url
 
     def d(self, message):
         if self.verbose:
@@ -85,7 +100,6 @@ class AbstractParser:
 
         except Exception as e:
             self.d(e)
-            print(f"tehere was an exception, {e}")
             return None
 
     def get_abstract(self):
@@ -95,6 +109,8 @@ class AbstractParser:
         else:
             return None
 
+    def extract_abstract(self, abstract_element):
+        return abstract_element.get_text().strip()
 
     def parse_abstract(self, html_content=None):
         if not html_content:
@@ -104,14 +120,17 @@ class AbstractParser:
 
         try:
             soup = BeautifulSoup(html_content, 'html.parser')
-            abstract_element = soup.select_one(self.ABSTRACT_SELECTOR)
-            if abstract_element:
-                return abstract_element.get_text().strip()
+            if self.IS_MULTIPLE:
+                abstract_texts = []
+                for abstract_element in soup.select(self.ABSTRACT_SELECTOR):
+                    abstract_texts.append(self.extract_abstract(abstract_element))
+                return ". ".join(abstract_texts)
             else:
-                return None
+                abstract_element = soup.select_one(self.ABSTRACT_SELECTOR)
+                return self.extract_abstract(abstract_element)
         except Exception as e:
             return None
-        
+
     def _get_final_url(self, html_content = None):
         response = requests.head(self.url, allow_redirects=True)
         return response.headers.get('Location', self.url)

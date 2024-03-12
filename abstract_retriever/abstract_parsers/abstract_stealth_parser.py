@@ -22,7 +22,7 @@ class AbstractStealthParser(AbstractParser):
 
         # Apply stealth techniques if using pyppeteer_stealth
         # await stealth(page)
-        await stealth(page,   run_on_insecure_origins = False,
+        await stealth(page, run_on_insecure_origins = False,
             languages = ["en-US", "en"],
             vendor = "Google Inc.",
             user_agent = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
@@ -35,11 +35,12 @@ class AbstractStealthParser(AbstractParser):
 
         await page.goto(url)
         return page, browser
-    
-    async def get(self, url=None, headers=None):
-        page, browser = await self.goto(url)
-        content = page.content()
-        await browser.close()
+          
+    def get(self, url=None, headers=None):
+        loop = asyncio.get_event_loop()
+        page, browser = loop.run_until_complete(self.goto(url))
+        content =  loop.run_until_complete(page.content())
+        loop.run_until_complete(browser.close())
         return content
 
         
