@@ -5,3 +5,16 @@ python-dotenv
 pyppeteer
 pyppeteer_stealth
 pytest-asyncio
+
+python-fasthtml
+requests
+openai
+python-dotenv
+pysqlite3
+sqlite-vec
+
+datasets
+sentence_transformers
+umap-learn
+plotly
+kaleido

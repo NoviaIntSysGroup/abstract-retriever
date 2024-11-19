@@ -2,7 +2,8 @@ import os
 import tempfile
 
 LIBRARY_IDENTIFIER = "abstract-retriever"
-CACHE_DIR = os.path.join(tempfile.gettempdir(), LIBRARY_IDENTIFIER)
+current_dir = os.path.dirname(os.path.abspath(__file__))
+CACHE_DIR = os.path.join(current_dir, "..", "data", LIBRARY_IDENTIFIER)
 
 # should be comaptiable with RedisCache...
 class Cacheable:
