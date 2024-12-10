@@ -1,0 +1,62 @@
+.hidden {
+    display: none;
+}
+
+
+/*#dummybodyid h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 10px 0 20px 0;
+}*/
+
+button,
+button *,
+a {
+    cursor: pointer;
+}
+
+main>.uk-container>.uk-h1 {
+    display: none;
+}
+
+#app h1 {
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+ul {
+    list-style-type: disc;
+}
+
+#cluster_info [uk-spinner] {
+    display: none !important;
+}
+
+#cluster_info.loading #result_title {
+    display: none;
+}
+
+#cluster_info.loading #result_desc {
+    display: none;
+}
+
+#cluster_info.loading #result_tags {
+    display: none;
+}
+
+#cluster_info.loading [uk-spinner] {
+    display: block !important;
+}
+
+.plotly .cartesianlayer .point {
+    cursor: pointer;
+}
+
+.search-row .search-trash {
+    opacity: 0.1;
+    transition: opacity 0.2s ease-in
+}
+
+.search-row:hover .search-trash {
+    opacity: 1;
+}
